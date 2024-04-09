@@ -26,3 +26,22 @@ code {
 [ref='sidebar-container'] > .btn {
   width: 100%;
 }
+.builder-component.essential-item {
+  border: 2px dashed #dadada;
+  padding: 32px;
+}
+.builder-component.essential-item:before {
+  content: 'Essential';
+  display: block;
+  position: absolute;
+  right: 0;
+  top: 0;
+  background: #e3e9f3;
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+  padding: 3px 12px;
+  border-radius: 2px;
+  border: 2px solid #ffffff;
+  color: #5d5d5d;
+}

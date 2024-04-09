@@ -1,14 +1,24 @@
 import { Form, FormBuilder } from '@formio/react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import Card from 'react-bootstrap/Card';
 import ReactJson from 'react-json-view';
 import builderOptions from './builder-options/builderOptions';
+import WebformBuilder from './WebFormBuilder';
 import { Formio, FormEdit } from '@formio/react';
+
 import TextFieldEdit from './builder-options/TexFieldEdit';
 
 import './styles/Builder.css';
+
+const _formiojs = require('formiojs');
+
+console.log('FormioJS', _formiojs);
+
+//console.log(_formiojs.Builders.builders.webform.prototype);
+//console.log(WebformBuilder);
+
 const Builder = () => {
   const [jsonSchema, setSchema] = useState({
     components: [
@@ -18,6 +28,7 @@ const Builder = () => {
         key: 'formTitle',
         type: 'textfield',
         input: true,
+        showSidebar: false,
       },
       {
         label:
@@ -26,6 +37,7 @@ const Builder = () => {
         key: 'formDescription',
         type: 'textarea',
         input: true,
+        showSidebar: false,
       },
       {
         label: 'Confirmation Page What Happens Next',
@@ -34,22 +46,42 @@ const Builder = () => {
         type: 'content',
         html: '<p>The confirmation message will appear on a new page once the form has been submitted. Some useful things you can add to your confirmation page are:</p>',
         input: false,
+        showSidebar: false,
+      },
+      {
+        label: 'Submit',
+        tableView: false,
+        key: 'submit',
+        type: 'button',
+        input: true,
+        showSidebar: false,
       },
     ],
   });
   const onFormChange = (schema) => {
     setSchema({ ...schema, components: [...schema.components] });
+    console.log(schema);
   };
-  console.log(
-    'Formio Builder Obj:',
-    Formio.Components.components.textarea.editForm()
-  );
+  // console.log(
+  //   "Formio Builder Obj:",
+  //   Formio.Components.components.textarea.editForm()
+  // );
+
   const TextFieldComponent = Formio.Components.components.textfield;
   TextFieldComponent.editForm = function () {
     return {
       components: [TextFieldEdit],
     };
   };
+
+  // const sideBarBtns = document.querySelectorAll('.formcomponent.drag-copy');
+  // sideBarBtns.forEach((btn) => {
+  //   //console.log(btn);
+  //   btn.setAttribute('tabIndex', '0');
+  //   btn.addEventListener('keydown', function (e) {
+
+  //   });
+  // });
 
   return (
     <Tabs id="builderTabs" className="mb-3">
@@ -81,7 +113,8 @@ const Builder = () => {
             <ReactJson
               src={jsonSchema}
               name={null}
-              collapsed={true}></ReactJson>
+              collapsed={true}
+            ></ReactJson>
           </Card.Body>
         </Card>
       </Tab>

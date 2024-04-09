@@ -73,6 +73,6 @@ const builderOptions = {
       },
     ],
   },
-  noDefaultSubmitButton: true,
+  //noDefaultSubmitButton: true,
 };
 export default builderOptions;
