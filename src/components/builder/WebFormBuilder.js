@@ -442,8 +442,28 @@ WebformBuilder.default.prototype.attachComponent = function (
   component
 ) {
   // Add component to element for later reference.
-  console.log('AttachComponent', component);
-
+  console.log('attachComponent Method', element);
+  element.setAttribute('tabindex', '0');
+  const btnElem = document.createElement('a');
+  btnElem.setAttribute('class', 'moveDn');
+  btnElem.textContent = 'Move';
+  btnElem.setAttribute('tabindex', '0');
+  element.appendChild(btnElem);
+  btnElem.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') {
+      console.log(e);
+      const thisParent = e.target.parentNode;
+      const nextSibling = thisParent.nextElementSibling;
+      const grandParent = thisParent.parentNode;
+      if (nextSibling) {
+        // If there is a next sibling, insert the parent element before the next sibling's next sibling
+        grandParent.insertBefore(thisParent, nextSibling.nextElementSibling);
+      } else {
+        // If there is no next sibling, append the parent element to the grand parent
+        grandParent.appendChild(thisParent);
+      }
+    }
+  });
   element.formioComponent = component;
 
   component.loadRefs(element, {
