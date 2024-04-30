@@ -45,3 +45,6 @@ code {
   border: 2px solid #ffffff;
   color: #5d5d5d;
 }
+.btn-move {
+  padding: 12px;
+}

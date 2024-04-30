@@ -138,24 +138,24 @@ WebformBuilder.default.prototype.editComponent = function (
   this.editForm.form =
     isJsonEdit && !isCustom
       ? {
-          components: [
-            {
-              type: 'textarea',
-              as: 'json',
-              editor: 'ace',
-              weight: 10,
-              input: true,
-              key: 'componentJson',
-              label: 'Component JSON',
-              tooltip: 'Edit the JSON for this component.',
-            },
-            {
-              type: 'checkbox',
-              key: 'showFullSchema',
-              label: 'Full Schema',
-            },
-          ],
-        }
+        components: [
+          {
+            type: 'textarea',
+            as: 'json',
+            editor: 'ace',
+            weight: 10,
+            input: true,
+            key: 'componentJson',
+            label: 'Component JSON',
+            tooltip: 'Edit the JSON for this component.',
+          },
+          {
+            type: 'checkbox',
+            key: 'showFullSchema',
+            label: 'Full Schema',
+          },
+        ],
+      }
       : ComponentClass.editForm(_.cloneDeep(overrides));
   const instanceOptions = {
     inFormBuilder: true,
@@ -168,14 +168,14 @@ WebformBuilder.default.prototype.editComponent = function (
 
   this.editForm.submission = isJsonEdit
     ? {
-        data: {
-          componentJson: schema,
-          showFullSchema: this.options.showFullJsonSchema,
-        },
-      }
+      data: {
+        componentJson: schema,
+        showFullSchema: this.options.showFullJsonSchema,
+      },
+    }
     : {
-        data: instance.component,
-      };
+      data: instance.component,
+    };
 
   if (this.preview) {
     this.preview.destroy();
@@ -443,27 +443,73 @@ WebformBuilder.default.prototype.attachComponent = function (
 ) {
   // Add component to element for later reference.
   console.log('attachComponent Method', element);
+  /**
+   * Set tabIndex to the element to add keyboard event Tab
+   */
   element.setAttribute('tabindex', '0');
+  const actionBtns = document.createElement('div');
+  actionBtns.classList.add('widget-action-btn');
   const btnElem = document.createElement('a');
   btnElem.setAttribute('class', 'moveDn');
-  btnElem.textContent = 'Move';
+  btnElem.setAttribute('class', 'btn-move');
+  btnElem.textContent = 'Move Down';
   btnElem.setAttribute('tabindex', '0');
-  element.appendChild(btnElem);
+  const upMoveBtn = document.createElement('a');
+  upMoveBtn.classList.add('move-up');
+  upMoveBtn.setAttribute('tabindex', '0');
+  upMoveBtn.setAttribute('class', 'btn-move');
+  upMoveBtn.textContent = "Move Up";
+  /**
+   * Append Move down button
+   */
+  actionBtns.appendChild(btnElem);
+  /**
+   * Append Move up button
+   */
+  actionBtns.appendChild(upMoveBtn)
+  /**
+   * Attach Action buttons to element
+   */
+  element.appendChild(actionBtns);
   btnElem.addEventListener('keydown', function (e) {
     if (e.key === 'Enter') {
-      console.log(e);
-      const thisParent = e.target.parentNode;
+      //console.log(e);
+      const thisParent = e.target.offsetParent.parentNode;
       const nextSibling = thisParent.nextElementSibling;
       const grandParent = thisParent.parentNode;
       if (nextSibling) {
         // If there is a next sibling, insert the parent element before the next sibling's next sibling
         grandParent.insertBefore(thisParent, nextSibling.nextElementSibling);
+        e.target.focus();
       } else {
         // If there is no next sibling, append the parent element to the grand parent
         grandParent.appendChild(thisParent);
       }
     }
   });
+  upMoveBtn.addEventListener('keydown', function (event) {
+    if (event.key === 'Enter') {
+      console.log('Event on Move Up', event);
+      const thisParent = event.target.offsetParent.parentNode;
+      const prevContainer = thisParent.previousElementSibling;
+      console.log('Event on prevContainer', prevContainer);
+      const topParent = thisParent.offsetParent;
+      console.log('grand father', topParent);
+      if (prevContainer) {
+        topParent.insertBefore(thisParent, prevContainer);
+        event.target.focus();
+        /**
+         * Stop this when reaches to bthe first component
+         */
+        // if (!prevContainer.classList.contains('essential-item')) {
+        //   topParent.insertBefore(thisParent, prevContainer);
+        // }
+
+      }
+
+
+    }
+  })
   element.formioComponent = component;
 
   component.loadRefs(element, {
@@ -488,6 +534,7 @@ WebformBuilder.default.prototype.attachComponent = function (
     element.classList.add('no-drag');
     element.style.cursor = 'auto';
     element.classList.add('essential-item');
+    element.querySelector('.widget-action-btn').remove();
     if (componentHoverElem) {
       //componentHoverElem.remove();
       const removeComElem = componentHoverElem.querySelector(
